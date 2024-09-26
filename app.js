@@ -1,4 +1,5 @@
 import { fetchData } from "./request.js";
+import { createSelector } from "./selector.js";
 
 async function displayData(query) {
     const data = await fetchData(query); // Call the async function and wait for the result
@@ -16,6 +17,10 @@ const query = "SELECT payment_type, COUNT(*) AS count_of_payment_type FROM _ GRO
 let data = await displayData(query); // Execute the function to show the data
 
 console.log('Response JAVIII:', data);
+
+//Create array of options to be added
+var array = ["Payment Type","Saab","Mercades","Audi"];
+createSelector(array);
 
 const pieChart = document.getElementById('pieChart');
 
@@ -50,8 +55,6 @@ new Chart(pieChart, {
   type: 'pie',
   data: chartData,
 });
-
-
 
 // Initialize the echarts instance based on the prepared dom
 var myChart = echarts.init(document.getElementById('main'));
