@@ -1,10 +1,10 @@
-export async function fetchData() {
+export async function fetchData(query) {
   const url = 'https://api.tinybird.co/v0/pipes/yellow_tripdata_2017_pipe.json';
   const token = 'p.eyJ1IjogIjdmOTIwMmMzLWM1ZjctNDU4Ni1hZDUxLTdmYzUzNTRlMTk5YSIsICJpZCI6ICJmZTRkNWFiZS05ZWIyLTRjMjYtYWZiZi0yYTdlMWJlNDQzOWEifQ.P67MfoqTixyasaMGH5RIjCrGc0bUKvBoKMwYjfqQN8c';
-  const query = 'SELECT * FROM _ LIMIT 30';
+  const finalQuery = query ? query : 'SELECT * FROM _ LIMIT 30';
   try {
     // Make a GET request using fetch and await the response
-    const response = await fetch(`${url}?token=${token}&q=${encodeURIComponent(query)}`);
+    const response = await fetch(`${url}?token=${token}&q=${encodeURIComponent(finalQuery)}`);
     // Check if the request was successful
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

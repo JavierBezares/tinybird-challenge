@@ -1,7 +1,7 @@
 import { fetchData } from "./request.js";
 
-async function displayData() {
-    const data = await fetchData(); // Call the async function and wait for the result
+async function displayData(query) {
+    const data = await fetchData(query); // Call the async function and wait for the result
     console.log('Response data:', data);
     console.table(data.data)
     console.log("** Query columns **")
@@ -11,7 +11,47 @@ async function displayData() {
     return data;
 }
 
-displayData(); // Execute the function to show the data
+const query = "SELECT payment_type, COUNT(*) AS count_of_payment_type FROM _ GROUP BY payment_type";
+//const query = undefined;
+let data = await displayData(query); // Execute the function to show the data
+
+console.log('Response JAVIII:', data);
+
+const pieChart = document.getElementById('pieChart');
+
+let chartDataSet = data.data.map(item => item.count_of_payment_type);
+
+//todo when we dont have data for a label the color is not shown
+const chartData = {
+  labels: [
+    'Credit card',
+    'Cash',
+    'No charge',
+    'Dispute',
+    'Unknown',
+    'Voided trip',
+  ],
+  datasets: [{
+    label: 'Payment Type',
+    data: chartDataSet,
+    backgroundColor: [
+      'rgb(255, 99, 132)',
+      'rgb(54, 162, 235)',
+      'rgb(255, 205, 86)',
+      'rgb(127, 176, 105)',
+      'rgb(205, 193, 255)',
+      'rgb(255, 152, 116)',
+    ],
+    hoverOffset: 4
+  }]
+};
+
+new Chart(pieChart, {
+  type: 'pie',
+  data: chartData,
+});
+
+
 
 // Initialize the echarts instance based on the prepared dom
 var myChart = echarts.init(document.getElementById('main'));
