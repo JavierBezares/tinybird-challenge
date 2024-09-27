@@ -1,85 +1,99 @@
 import { fetchData } from "./request.js";
 import { createSelector } from "./selector.js";
 
-async function displayData(query) {
-    const data = await fetchData(query); // Call the async function and wait for the result
-    console.log('Response data:', data);
-    console.table(data.data)
-    console.log("** Query columns **")
-    for (let column of data.meta) {
-        //console.log(`${column.name} -> ${column.type}`)
-    }
-    return data;
-}
+const queryPaymentType = "SELECT payment_type, COUNT(*) AS count_of_payment_type FROM _ GROUP BY payment_type";
+const queryDay = "SELECT DATE(tpep_pickup_datetime) AS day, COUNT(*) AS total_trips, AVG(total_amount) AS avg_total_amount, AVG(trip_distance) AS avg_trip_distance, AVG(passenger_count) AS avg_passenger_count, SUM(total_amount) AS total_amount_by_day FROM _ GROUP BY DATE(tpep_pickup_datetime) ORDER BY day";
+const data = await fetchData(queryDay);
 
-const query = "SELECT payment_type, COUNT(*) AS count_of_payment_type FROM _ GROUP BY payment_type";
-//const query = undefined;
-let data = await displayData(query); // Execute the function to show the data
+//SELECT DATE_FORMAT(tpep_pickup_datetime, '%Y-%m') AS month, COUNT(*) AS total_trips, AVG(total_amount) AS avg_total_amount, AVG(trip_distance) AS avg_trip_distance, AVG(passenger_count) AS avg_passenger_count, SUM(total_amount) AS total_amount_by_month FROM _ GROUP BY DATE_FORMAT(tpep_pickup_datetime, '%Y-%m') ORDER BY month
+//SELECT YEAR(tpep_pickup_datetime) AS year, COUNT(*) AS total_trips, AVG(total_amount) AS avg_total_amount, AVG(trip_distance) AS avg_trip_distance, AVG(passenger_count) AS avg_passenger_count, SUM(total_amount) AS total_amount_by_month FROM _ GROUP BY YEAR(tpep_pickup_datetime) ORDER BY year
+//SELECT DATE(tpep_pickup_datetime) AS day, COUNT(*) AS total_trips, AVG(total_amount) AS avg_total_amount, AVG(trip_distance) AS avg_trip_distance, AVG(passenger_count) AS avg_passenger_count, SUM(total_amount) AS total_amount_by_month FROM _ GROUP BY DATE(tpep_pickup_datetime) ORDER BY day
 
-console.log('Response JAVIII:', data);
-
-//Create array of options to be added
-var array = ["Payment Type","Saab","Mercades","Audi"];
+var array = ["Payment Type","Total Per Day","Example 3","Example 4"];
 createSelector(array);
 
-const pieChart = document.getElementById('pieChart');
-
 let chartDataSet = data.data.map(item => item.count_of_payment_type);
+console.log(chartDataSet);
 
-//todo when we dont have data for a label the color is not shown
-const chartData = {
-  labels: [
-    'Credit card',
-    'Cash',
-    'No charge',
-    'Dispute',
-    'Unknown',
-    'Voided trip',
-  ],
-  datasets: [{
-    label: 'Payment Type',
-    data: chartDataSet,
-    backgroundColor: [
-      'rgb(255, 99, 132)',
-      'rgb(54, 162, 235)',
-      'rgb(255, 205, 86)',
-      'rgb(127, 176, 105)',
-      'rgb(205, 193, 255)',
-      'rgb(255, 152, 116)',
-    ],
-    hoverOffset: 4
-  }]
-};
-
-new Chart(pieChart, {
-  type: 'pie',
-  data: chartData,
-});
+var labels = [
+  'Credit card',
+  'Cash',
+  'No charge',
+  'Dispute',
+  'Unknown',
+  'Voided trip',
+];
 
 // Initialize the echarts instance based on the prepared dom
 var myChart = echarts.init(document.getElementById('main'));
 
-// Specify the configuration items and data for the chart
-var option = {
+var option2 = {
   title: {
     text: 'ECharts Getting Started Example'
   },
   tooltip: {},
   legend: {
-    data: ['sales']
+    orient: 'horizontal',
+    right: 10,
+    top: 'bottom'
   },
-  xAxis: {
-    data: ['Shirts', 'Cardigans', 'Chiffons', 'Pants', 'Heels', 'Socks']
-  },
-  yAxis: {},
   series: [
     {
-      name: 'sales',
-      type: 'bar',
-      data: [5, 20, 36, 10, 10, 20]
+      type: 'pie',
+      data: [
+        {
+          value: 335,
+          name: 'Direct Visit'
+        },
+        {
+          value: 234,
+          name: 'Union Ad'
+        },
+        {
+          value: 1548,
+          name: 'Search Engine'
+        }
+      ]
+    }
+  ]
+};
+myChart.setOption(option2);
+
+let days = data.data.map(row => row.day);
+let values = data.data.map(row => row.total_trips);
+let valuesObject = data.data.map(row => {
+  return {
+    name: "hola",
+    value: row.total_trips
+  }
+});
+console.log("valuesObject", valuesObject);
+
+
+let option3 = {
+  legend: {},
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: { type: 'cross' }
+  },
+  xAxis: {
+    type: 'category',
+    data: days
+  },
+  yAxis: {
+    type: 'value',
+    axisLabel: {
+      formatter: '{value} $',
+    }
+  },
+  series: [
+    {
+      data: values,
+      type: 'line',
+      name: "Total Trips"
     }
   ]
 };
 
-// Display the chart using the configuration items and data just specified.
-myChart.setOption(option);
+var lineChart = echarts.init(document.getElementById('lineChart'));
+lineChart.setOption(option3);
