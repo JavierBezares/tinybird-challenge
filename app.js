@@ -1,3 +1,4 @@
+import { ChartConfig } from "./chartConfigBuilder.js";
 import { fetchData } from "./request.js";
 import { createSelector } from "./selector.js";
 
@@ -10,7 +11,15 @@ const data = await fetchData(queryDay);
 //SELECT DATE(tpep_pickup_datetime) AS day, COUNT(*) AS total_trips, AVG(total_amount) AS avg_total_amount, AVG(trip_distance) AS avg_trip_distance, AVG(passenger_count) AS avg_passenger_count, SUM(total_amount) AS total_amount_by_month FROM _ GROUP BY DATE(tpep_pickup_datetime) ORDER BY day
 
 var array = ["Payment Type","Total Per Day","Example 3","Example 4"];
-createSelector(array);
+var selectList = createSelector(array);
+
+selectList.addEventListener("change", onSelectorChange);
+
+function onSelectorChange(event) {
+  console.log("evento", event.target.value);
+  // fetchData
+  // change displayed
+}
 
 let chartDataSet = data.data.map(item => item.count_of_payment_type);
 console.log(chartDataSet);
@@ -63,12 +72,11 @@ let days = data.data.map(row => row.day);
 let values = data.data.map(row => row.total_trips);
 let valuesObject = data.data.map(row => {
   return {
-    name: "hola",
+    category: row.day,
     value: row.total_trips
   }
 });
 console.log("valuesObject", valuesObject);
-
 
 let option3 = {
   legend: {},
@@ -96,4 +104,8 @@ let option3 = {
 };
 
 var lineChart = echarts.init(document.getElementById('lineChart'));
-lineChart.setOption(option3);
+//lineChart.setOption(option3);
+
+var chartConfig = new ChartConfig(valuesObject, 'line', true, true);
+//var chartConfig = new ChartConfig(valuesObject, 'pie', true, true);
+lineChart.setOption(chartConfig.option);
