@@ -39,6 +39,5 @@ function updateChartData() {
 
 function updateChart() {
   chartData = updateChartData();
-  console.log("chartData", chartData);
-  return new ChartConfig(chartData, 'line', selectedOption, '$', true, true);
+  return new ChartConfig(chartData, 'line', selectedOption, '', true, true);
 }
