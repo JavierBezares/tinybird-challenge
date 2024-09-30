@@ -1,8 +1,10 @@
-export function ChartConfig(data, type, legend = true, tooltip = true) {
+export function ChartConfig(data, type, seriesName, yAxisLabel, legend = true, tooltip = true) {
   this.data = data;
   this.values = data.map(dataPoint => dataPoint.value);
   this.categories = data.map(dataPoint => dataPoint.category);
   this.type = type;
+  this.seriesName = seriesName;
+  this.yAxisLabel = yAxisLabel;
   this.legend = legend;
   this.tooltip = tooltip;
   this.option = {};
@@ -30,7 +32,7 @@ function createChartOptions() {
   this.option.yAxis = {
     type: 'value',
     axisLabel: {
-      formatter: '{value} $',
+      formatter: `{value} ${this.yAxisLabel}`,
     }
   };
 
@@ -39,7 +41,7 @@ function createChartOptions() {
       {
         data: this.values,
         type: this.type,
-        name: "Total Trips"
+        name: this.seriesName
       }
     ];
   }
@@ -58,5 +60,4 @@ function createChartOptions() {
       }
     ];
   }
-  return this.option;
 }

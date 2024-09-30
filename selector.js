@@ -8,7 +8,7 @@ export function createSelector(options) {
   options.forEach(option => {
     let optionElement = document.createElement("option");
     optionElement.value = option;
-    optionElement.text = option;
+    optionElement.label = option;
     selectList.appendChild(optionElement);
   });
   return selectList;
